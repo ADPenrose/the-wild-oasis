@@ -14,12 +14,34 @@ import PageNotFound from './pages/PageNotFound';
 import GlobalStyles from './styles/GlobalStyles';
 import AppLayout from './ui/AppLayout';
 
+// React Query
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Toaster } from 'react-hot-toast';
+
+// Creating the cache and the query client.
+// The stale time option defines how long the data
+// should be considered "fresh". If the data is older
+// than the stale time, it will be refetched. It is in
+// milliseconds.
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			// staleTime: 1000 * 60, // 1 minute
+			staleTime: 0, // As soon as the data is fetched, it will be considered stale.
+		},
+	},
+});
+
 // Since we are not going to be using the data loading
 // functionality of React Router, we can just use the
 // old way of defining routes.
 function App() {
 	return (
-		<>
+		// Providing the query client to the app.
+		<QueryClientProvider client={queryClient}>
+			{/* Importing the DevTools */}
+			<ReactQueryDevtools initialIsOpen={false} />
 			{/* Importing the global styles component. */}
 			<GlobalStyles />
 			<BrowserRouter>
@@ -39,7 +61,31 @@ function App() {
 					<Route path="*" element={<PageNotFound />} />
 				</Routes>
 			</BrowserRouter>
-		</>
+
+			{/* This component will produce all of the toasts */}
+			<Toaster
+				position="top-center"
+				gutter={12}
+				containerStyle={{ margin: '8px' }}
+				toastOptions={{
+					// Defining some common styles.
+					style: {
+						fontSize: '16px',
+						maxWidth: '500px',
+						padding: '16px 24px',
+						backgroundColor: 'var(--color-grey-0)',
+					},
+					// Defining some options for the success toast.
+					success: {
+						duration: 3000,
+					},
+					// Defining some options for the error toast.
+					error: {
+						duration: 5000,
+					},
+				}}
+			/>
+		</QueryClientProvider>
 	);
 }
 
