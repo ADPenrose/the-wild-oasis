@@ -57,14 +57,14 @@ const Button = styled.button`
 
 	/* Obtaining the CSS styles defined on variables above, according
 	to a given prop. */
-	${(props) => sizes[props.size]}
-	${(props) => variations[props.variation]}
+	${(props) => sizes[props.$size]}
+	${(props) => variations[props.$variation]}
 `;
 
 // Declaring default props.
 Button.defaultProps = {
-	variation: 'primary',
-	size: 'medium',
+	$variation: 'primary',
+	$size: 'medium',
 };
 
 export default Button;
