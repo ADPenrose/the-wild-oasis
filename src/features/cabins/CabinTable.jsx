@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { getCabins } from '../../services/apiCabins';
 import Spinner from '../../ui/Spinner';
 import CabinRow from './CabinRow';
+import { useCabins } from './useCabins';
 
 const Table = styled.div`
 	border: 1px solid var(--color-grey-200);
@@ -29,15 +30,8 @@ const TableHeader = styled.header`
 `;
 
 function CabinTable() {
-	// Quering the Supabase API.
-	const {
-		isLoading,
-		data: cabins,
-		error,
-	} = useQuery({
-		queryKey: ['cabins'],
-		queryFn: getCabins,
-	});
+	// I can use the custom hook for fetching data.
+	const { cabins, isLoading } = useCabins();
 
 	// If the data is loading, we show a spinner.
 	if (isLoading) return <Spinner />;

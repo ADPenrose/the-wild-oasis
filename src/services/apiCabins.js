@@ -14,7 +14,10 @@ export async function getCabins() {
 	return data;
 }
 
-export async function createCabin(newCabin) {
+export async function createEditCabin(newCabin, id) {
+	// First, we check if the image data sent has supabase's url.
+	const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
+
 	// Creating a "random" name for the image. We need to replace the slashes
 	// because Supabase would create folders otherwise.
 	const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll(
@@ -22,14 +25,26 @@ export async function createCabin(newCabin) {
 		''
 	);
 
-	// This is the path where the image will be stored.
-	const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
+	// This is the path where the image will be stored. If there is already
+	// a path, we use it. If not, we create a new one.
+	const imagePath = hasImagePath
+		? newCabin.image
+		: `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
 
-	// First, a new cabin needs to be created.
-	const { data, error } = await supabase
-		.from('cabins')
-		.insert([{ ...newCabin, image: imagePath }])
-		.select();
+	// Let's create a reusabel query.
+	let query = supabase.from('cabins');
+
+	// If ther is no id, we create a new cabin.
+	if (!id) {
+		query = query.insert([{ ...newCabin, image: imagePath }]);
+	}
+
+	// If there is an id, we update the cabin.
+	if (id) {
+		query = query.update({ ...newCabin, image: imagePath }).eq('id', id);
+	}
+
+	const { data, error } = await query.select().single();
 
 	// If there is an error, we throw it.
 	if (error) {
