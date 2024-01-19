@@ -31,10 +31,10 @@ const TableHeader = styled.header`
 
 function CabinTable() {
 	// I can use the custom hook for fetching data.
-	const { cabins, isLoading } = useCabins();
+	const { cabins, isPending } = useCabins();
 
 	// If the data is loading, we show a spinner.
-	if (isLoading) return <Spinner />;
+	if (isPending) return <Spinner />;
 
 	return (
 		<Table role="table">

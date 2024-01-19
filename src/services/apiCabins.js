@@ -34,7 +34,7 @@ export async function createEditCabin(newCabin, id) {
 	// Let's create a reusabel query.
 	let query = supabase.from('cabins');
 
-	// If ther is no id, we create a new cabin.
+	// If there is no id, we create a new cabin.
 	if (!id) {
 		query = query.insert([{ ...newCabin, image: imagePath }]);
 	}
@@ -50,6 +50,12 @@ export async function createEditCabin(newCabin, id) {
 	if (error) {
 		console.error(error);
 		throw new Error('Cabin could not be created');
+	}
+
+	// If there is already an image, we don't need to upload anything, so we can
+	// return the data.
+	if (hasImagePath) {
+		return data;
 	}
 
 	// If there is no error, we need to upload the image.

@@ -4,7 +4,7 @@ import { getCabins } from '../../services/apiCabins';
 export function useCabins() {
 	// Quering the Supabase API.
 	const {
-		isLoading,
+		isPending,
 		data: cabins,
 		error,
 	} = useQuery({
@@ -13,5 +13,5 @@ export function useCabins() {
 	});
 
 	// Returning the cabins and the loading state.
-	return { cabins, isLoading, error };
+	return { cabins, isPending, error };
 }
