@@ -1,6 +1,8 @@
+import { cloneElement, createContext, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { HiXMark } from 'react-icons/hi2';
 import styled from 'styled-components';
+import { useOutsideClick } from '../hooks/useOutsideClick';
 
 const StyledModal = styled.div`
 	position: fixed;
@@ -51,19 +53,57 @@ const Button = styled.button`
 	}
 `;
 
-function Modal({ children, onClose }) {
+// Implementing the compound components pattern.
+// 1. Creating a new context.
+const ModalContext = createContext();
+
+// 2. Creating the parent component.
+function Modal({ children }) {
+	const [openName, setOpenName] = useState('');
+
+	const close = () => setOpenName('');
+	const open = setOpenName;
+
+	return (
+		<ModalContext.Provider value={{ openName, close, open }}>
+			{children}
+		</ModalContext.Provider>
+	);
+}
+
+// 3. Creating the child components.
+function Open({ children, opens: opensWindowName }) {
+	const { open } = useContext(ModalContext);
+
+	// Cloning the child component and adding a new prop.
+	return cloneElement(children, {
+		onClick: () => open(opensWindowName),
+	});
+}
+
+function Window({ children, name }) {
+	const { openName, close } = useContext(ModalContext);
+	const { ref } = useOutsideClick(close);
+
+	// If the name of the window does not match the name of the open window, return null.
+	if (name !== openName) return null;
+
 	// Rendering the modal as a direct child of the body element through a Portal.
 	return createPortal(
 		<Overlay>
-			<StyledModal>
-				<Button onClick={onClose}>
+			<StyledModal ref={ref}>
+				<Button onClick={close}>
 					<HiXMark />
 				</Button>
-				<div>{children}</div>
+				<div>{cloneElement(children, { onCloseModal: close })}</div>
 			</StyledModal>
 		</Overlay>,
 		document.body
 	);
 }
+
+// 4. Placing the child components as properties of the parent component.
+Modal.Open = Open;
+Modal.Window = Window;
 
 export default Modal;
