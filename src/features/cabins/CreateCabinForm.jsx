@@ -9,7 +9,7 @@ import Textarea from '../../ui/Textarea';
 import FormRow from '../../ui/FormRow';
 import { useEditCabin } from './useEditCabin';
 
-function CreateCabinForm({ cabinToEdit = {} }) {
+function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
 	// Getting the values necessary to re-populate the form.
 	const { id: editId, ...editValues } = cabinToEdit;
 
@@ -33,7 +33,6 @@ function CreateCabinForm({ cabinToEdit = {} }) {
 
 	// This variables tells us if the function is in the process of creating or editing a cabin.
 	const isWorking = isCreating || isEditing;
-	console.log(isEditing);
 
 	// This function will be called when the form is submitted.
 	// It gets access to all the data from the form.
@@ -44,11 +43,24 @@ function CreateCabinForm({ cabinToEdit = {} }) {
 		if (isEditSession) {
 			editCabin(
 				{ newCabinData: { ...data, image }, id: editId },
-				{ onSuccess: () => reset() }
+				{
+					onSuccess: () => {
+						reset();
+						onCloseModal?.();
+					},
+				}
 			);
 		} else {
 			// Since the image is an array, I need to get the first element from it.
-			createCabin({ ...data, image: image }, { onSuccess: () => reset() });
+			createCabin(
+				{ ...data, image: image },
+				{
+					onSuccess: () => {
+						reset();
+						onCloseModal?.();
+					},
+				}
+			);
 		}
 	}
 
@@ -59,7 +71,10 @@ function CreateCabinForm({ cabinToEdit = {} }) {
 
 	return (
 		// Handling both the submit and the error cases (validation-wise) for the form.
-		<Form onSubmit={handleSubmit(onSubmit, onError)}>
+		<Form
+			onSubmit={handleSubmit(onSubmit, onError)}
+			$type={onCloseModal ? 'modal' : 'regular'}
+		>
 			<FormRow label="Cabin name" error={errors?.name?.message}>
 				{/* Registering the input fields that we want React Hook Forms to handle*/}
 				<Input
@@ -144,7 +159,11 @@ function CreateCabinForm({ cabinToEdit = {} }) {
 
 			<FormRow>
 				{/* type is an HTML attribute! */}
-				<Button $variation="secondary" type="reset">
+				<Button
+					onClick={() => onCloseModal?.()}
+					$variation="secondary"
+					type="reset"
+				>
 					Cancel
 				</Button>
 				<Button disabled={isWorking}>
