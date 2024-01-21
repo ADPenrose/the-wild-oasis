@@ -91,7 +91,7 @@ function Row({ children }) {
 // This component uses the render props pattern.
 function Body({ data, render }) {
 	// If there is no data, we return the empty component.
-	if (data.length === 0) return <Empty>No cabins found.</Empty>;
+	if (data.length === 0) return <Empty>No data to show at the moment.</Empty>;
 
 	return <StyledBody>{data.map(render)}</StyledBody>;
 }
