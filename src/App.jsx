@@ -20,6 +20,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Toaster } from 'react-hot-toast';
 import Booking from './pages/Booking';
 import Checkin from './pages/Checkin';
+import ProtectedRoute from './ui/ProtectedRoute';
 
 // Creating the cache and the query client.
 // The stale time option defines how long the data
@@ -49,7 +50,13 @@ function App() {
 			<BrowserRouter>
 				<Routes>
 					{/* This route is here to provide a layout to its child routes */}
-					<Route element={<AppLayout />}>
+					<Route
+						element={
+							<ProtectedRoute>
+								<AppLayout />
+							</ProtectedRoute>
+						}
+					>
 						{/* Creating a redirect to the dashboard page */}
 						<Route index element={<Navigate to="dashboard" replace />} />
 						<Route path="dashboard" element={<Dashboard />} />
