@@ -44,6 +44,8 @@ function Filter({ filterField, options }) {
 	function handleClick(value) {
 		// This sets the search params to the value of the button that was clicked.
 		searchParams.set(filterField, value);
+		// If the page exists when we change the filter, we need to reset it to 1.
+		if (searchParams.get('page')) searchParams.set('page', 1);
 		// Once we have the updated params, we need to make that change also in
 		// the URL.
 		setSearchParams(searchParams);
