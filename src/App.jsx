@@ -21,6 +21,7 @@ import { Toaster } from 'react-hot-toast';
 import Booking from './pages/Booking';
 import Checkin from './pages/Checkin';
 import ProtectedRoute from './ui/ProtectedRoute';
+import { DarkModeProvider } from './context/DarkModeContext';
 
 // Creating the cache and the query client.
 // The stale time option defines how long the data
@@ -41,62 +42,64 @@ const queryClient = new QueryClient({
 // old way of defining routes.
 function App() {
 	return (
-		// Providing the query client to the app.
-		<QueryClientProvider client={queryClient}>
-			{/* Importing the DevTools */}
-			<ReactQueryDevtools initialIsOpen={false} />
-			{/* Importing the global styles component. */}
-			<GlobalStyles />
-			<BrowserRouter>
-				<Routes>
-					{/* This route is here to provide a layout to its child routes */}
-					<Route
-						element={
-							<ProtectedRoute>
-								<AppLayout />
-							</ProtectedRoute>
-						}
-					>
-						{/* Creating a redirect to the dashboard page */}
-						<Route index element={<Navigate to="dashboard" replace />} />
-						<Route path="dashboard" element={<Dashboard />} />
-						<Route path="bookings" element={<Bookings />} />
-						<Route path="bookings/:bookingId" element={<Booking />} />
-						<Route path="checkin/:bookingId" element={<Checkin />} />
-						<Route path="cabins" element={<Cabins />} />
-						<Route path="users" element={<Users />} />
-						<Route path="settings" element={<Settings />} />
-						<Route path="account" element={<Account />} />
-					</Route>
-					<Route path="login" element={<Login />} />
-					<Route path="*" element={<PageNotFound />} />
-				</Routes>
-			</BrowserRouter>
+		<DarkModeProvider>
+			{/* Providing the query client to the app. */}
+			<QueryClientProvider client={queryClient}>
+				{/* Importing the DevTools */}
+				<ReactQueryDevtools initialIsOpen={false} />
+				{/* Importing the global styles component. */}
+				<GlobalStyles />
+				<BrowserRouter>
+					<Routes>
+						{/* This route is here to provide a layout to its child routes */}
+						<Route
+							element={
+								<ProtectedRoute>
+									<AppLayout />
+								</ProtectedRoute>
+							}
+						>
+							{/* Creating a redirect to the dashboard page */}
+							<Route index element={<Navigate to="dashboard" replace />} />
+							<Route path="dashboard" element={<Dashboard />} />
+							<Route path="bookings" element={<Bookings />} />
+							<Route path="bookings/:bookingId" element={<Booking />} />
+							<Route path="checkin/:bookingId" element={<Checkin />} />
+							<Route path="cabins" element={<Cabins />} />
+							<Route path="users" element={<Users />} />
+							<Route path="settings" element={<Settings />} />
+							<Route path="account" element={<Account />} />
+						</Route>
+						<Route path="login" element={<Login />} />
+						<Route path="*" element={<PageNotFound />} />
+					</Routes>
+				</BrowserRouter>
 
-			{/* This component will produce all of the toasts */}
-			<Toaster
-				position="top-center"
-				gutter={12}
-				containerStyle={{ margin: '8px' }}
-				toastOptions={{
-					// Defining some common styles.
-					style: {
-						fontSize: '16px',
-						maxWidth: '500px',
-						padding: '16px 24px',
-						backgroundColor: 'var(--color-grey-0)',
-					},
-					// Defining some options for the success toast.
-					success: {
-						duration: 3000,
-					},
-					// Defining some options for the error toast.
-					error: {
-						duration: 5000,
-					},
-				}}
-			/>
-		</QueryClientProvider>
+				{/* This component will produce all of the toasts */}
+				<Toaster
+					position="top-center"
+					gutter={12}
+					containerStyle={{ margin: '8px' }}
+					toastOptions={{
+						// Defining some common styles.
+						style: {
+							fontSize: '16px',
+							maxWidth: '500px',
+							padding: '16px 24px',
+							backgroundColor: 'var(--color-grey-0)',
+						},
+						// Defining some options for the success toast.
+						success: {
+							duration: 3000,
+						},
+						// Defining some options for the error toast.
+						error: {
+							duration: 5000,
+						},
+					}}
+				/>
+			</QueryClientProvider>
+		</DarkModeProvider>
 	);
 }
 
